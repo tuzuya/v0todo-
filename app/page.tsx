@@ -287,7 +287,7 @@ export default function TodoApp() {
             {/* Main Content */}
             <div className="lg:col-span-3 space-y-6 animate-in fade-in slide-in-from-right-4 duration-700 delay-300">
               {/* Add Task Form */}
-              <AddTaskForm onAddTask={addTask} />
+              <AddTaskForm onAddTask={addTask} ref={addTaskFormRef} allTags={allTags} />
 
               {/* Tasks List */}
               <div className="space-y-4">

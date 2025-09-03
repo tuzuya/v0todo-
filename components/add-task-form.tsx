@@ -39,9 +39,10 @@ interface Task {
 
 interface AddTaskFormProps {
   onAddTask: (task: Omit<Task, "id" | "createdAt">) => void
+  allTags?: string[]
 }
 
-export const AddTaskForm = forwardRef<HTMLInputElement, AddTaskFormProps>(({ onAddTask }, ref) => {
+export const AddTaskForm = forwardRef<HTMLInputElement, AddTaskFormProps>(({ onAddTask, allTags = [] }, ref) => {
   const [title, setTitle] = useState("")
   const [priority, setPriority] = useState<"low" | "medium" | "high" | undefined>()
   const [dueDate, setDueDate] = useState<Date>()
@@ -55,6 +56,12 @@ export const AddTaskForm = forwardRef<HTMLInputElement, AddTaskFormProps>(({ onA
     if (newTag.trim() && !tags.includes(newTag.trim())) {
       setTags((prev) => [...prev, newTag.trim()])
       setNewTag("")
+    }
+  }
+
+  const selectExistingTag = (tag: string) => {
+    if (!tags.includes(tag)) {
+      setTags((prev) => [...prev, tag])
     }
   }
 
@@ -91,6 +98,8 @@ export const AddTaskForm = forwardRef<HTMLInputElement, AddTaskFormProps>(({ onA
       handleSubmit()
     }
   }
+
+  const availableTags = allTags.filter((tag) => !tags.includes(tag))
 
   return (
     <Card
@@ -189,6 +198,28 @@ export const AddTaskForm = forwardRef<HTMLInputElement, AddTaskFormProps>(({ onA
                     Add
                   </Button>
                 </div>
+
+                {availableTags.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground">Select from existing tags:</p>
+                    <div className="flex flex-wrap gap-1 max-h-20 overflow-y-auto">
+                      {availableTags.map((tag) => (
+                        <Badge
+                          key={tag}
+                          variant="outline"
+                          className={cn(
+                            "text-xs px-2 py-1 cursor-pointer transition-all duration-200",
+                            "hover:bg-primary/10 hover:text-primary hover:scale-105 active:scale-95",
+                            "border-dashed border-muted-foreground/30 hover:border-primary/50",
+                          )}
+                          onClick={() => selectExistingTag(tag)}
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-1">
